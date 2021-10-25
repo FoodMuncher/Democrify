@@ -24,12 +24,7 @@ defmodule Democrify.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Democrify.Supervisor]
-    pid = Supervisor.start_link(children, opts)
-
-    ## TODO: remove once sessions are working
-    Democrify.SessionRegistry.create()
-
-    pid
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration
