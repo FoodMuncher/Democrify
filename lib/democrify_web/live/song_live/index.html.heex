@@ -3,6 +3,7 @@
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal DemocrifyWeb.SongLive.FormComponent,
     id: @song.id || :new,
+    session_id: @session_id,
     title: @page_title,
     action: @live_action,
     song: @song,
@@ -12,8 +13,8 @@
 
 <div id="song">
   <%= for song <- @session do %>
-    <%= live_component @socket, DemocrifyWeb.SongLive.SongComponent, id: song.id, song: song %>
+    <%= live_component @socket, DemocrifyWeb.SongLive.SongComponent, id: song.id, song: song, session_id: @session_id %>
   <% end %>
 </div>
 
-<span><%= live_patch "New Song", to: Routes.song_index_path(@socket, :new, @session_id) %></span>
+<span><%= live_patch "New Song", to: Routes.song_index_path(@socket, :new) %></span>
