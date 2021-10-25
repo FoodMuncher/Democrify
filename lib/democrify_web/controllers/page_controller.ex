@@ -1,8 +1,6 @@
 defmodule DemocrifyWeb.PageController do
   use DemocrifyWeb, :controller
 
-  require Logger
-
   alias Democrify.Session
 
   @redirect_uri "http://localhost:4000/callback"
@@ -55,17 +53,15 @@ defmodule DemocrifyWeb.PageController do
     response = HTTPoison.post!(url, request_body)
     response_body = JSON.decode!(response.body)
 
-    Logger.debug("Response Body: #{inspect(response_body)}")
-
     # response2 =
     #   HTTPoison.get!("https://api.spotify.com/v1/me",
-    #     Authorization: "Bearer #{body["access_token"]}"
+    #     Authorization: "Bearer #{body.access_token}"
     #   )
 
     session_id = get_session(conn, "session_id")
     # TODO: kill existing session, or ask to resume
     if session_id == nil || not Session.exists?(session_id) do
-      put_session(conn, "session_id", Session.create_session())
+      put_session(conn, :session_id, Session.create_session())
     else
       conn
     end

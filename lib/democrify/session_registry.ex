@@ -1,8 +1,6 @@
 defmodule Democrify.SessionRegistry do
   use GenServer
 
-  require Logger
-
   # ===========================================================
   # API functions
   # ===========================================================

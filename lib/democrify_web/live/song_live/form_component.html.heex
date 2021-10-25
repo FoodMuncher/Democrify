@@ -12,7 +12,7 @@
     <%= label f, :song_name %>
     <%= text_input f, :text, autocomplete: "off" %>
     <%= if @suggested_songs do %>
-      <%= select f, :song_name, @suggested_songs %>
+      <%= select f, :track_id, @suggested_songs %>
     <% end %>
     <%= error_tag f, :song_name %>
   

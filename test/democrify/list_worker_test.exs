@@ -1,8 +1,6 @@
 defmodule Democrify.SessionWorkerTest do
   use ExUnit.Case
 
-  require Logger
-
   alias Democrify.Session.Song
   alias Democrify.SessionWorker, as: Worker
 

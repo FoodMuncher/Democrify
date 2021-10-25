@@ -2,8 +2,7 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
   use DemocrifyWeb, :live_component
 
   alias Democrify.Session
-
-  require Logger
+  alias Democrify.Session.Song
 
   @impl true
   def mount(socket) do
@@ -22,13 +21,25 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"song" => song_params}, socket) do
-    Logger.debug("Here Validate: #{inspect(song_params)}")
-
     text = song_params["text"]
 
     suggested_songs =
       if text && text != "" do
-        ["song_1", "song_2"]
+        response =
+          HTTPoison.get!(
+            URI.encode("https://api.spotify.com/v1/search?q=#{text}&type=track&limit=10"),
+            Authorization: "Bearer #{socket.assigns.access_token}"
+          )
+
+        response_body = JSON.decode!(response.body)
+
+        case convert_body_to_list(response_body["tracks"]["items"]) do
+          [] ->
+            nil
+
+          songs ->
+            songs
+        end
       else
         nil
       end
@@ -46,12 +57,30 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("save", %{"song" => song_params} = map, socket) do
+  def handle_event("save", %{"song" => song_params}, socket) do
     save_song(socket, socket.assigns.action, song_params)
   end
 
+  defp save_song(socket, :new, song_params) do
+    Session.create_song(
+      song_params["track_id"],
+      socket.assigns.session_id,
+      socket.assigns.access_token
+    )
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Song created successfully")
+     |> push_redirect(to: socket.assigns.return_to)}
+  end
+
   defp save_song(socket, :edit, song_params) do
-    Session.update_song(socket.assigns.song, socket.assigns.session_id, song_params)
+    Session.update_song(
+      song_params["track_id"],
+      socket.assigns.session_id,
+      socket.assigns.access_token,
+      socket.assigns.song
+    )
 
     {:noreply,
      socket
@@ -59,12 +88,14 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
      |> push_redirect(to: socket.assigns.return_to)}
   end
 
-  defp save_song(socket, :new, song_params) do
-    Session.create_song(song_params, socket.assigns.session_id)
+  defp convert_body_to_list([]) do
+    []
+  end
 
-    {:noreply,
-     socket
-     |> put_flash(:info, "Song created successfully")
-     |> push_redirect(to: socket.assigns.return_to)}
+  defp convert_body_to_list([track | tracks]) do
+    [
+      {"#{track["name"]} - #{Song.artists(track["artists"])}", track["id"]}
+      | convert_body_to_list(tracks)
+    ]
   end
 end

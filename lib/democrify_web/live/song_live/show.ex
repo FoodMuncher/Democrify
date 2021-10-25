@@ -13,7 +13,8 @@ defmodule DemocrifyWeb.SongLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:song, Session.get_song!(id))}
+     #  TODO: Not actually sure when this is called, so just hard coded the session id to 12 for now.
+     |> assign(:song, Session.get_song!(id, 12))}
   end
 
   defp page_title(:show), do: "Show Song"
