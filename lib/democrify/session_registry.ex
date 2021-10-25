@@ -11,16 +11,16 @@ defmodule Democrify.SessionRegistry do
     GenServer.start_link(__MODULE__, [], [name: __MODULE__] ++ opts)
   end
 
-  def create(session_id \\ 12) do
+  def create(session_id) do
     GenServer.call(__MODULE__, {:create, session_id})
   end
 
-  def lookup!(session_id \\ 12) do
+  def lookup!(session_id) do
     [{^session_id, pid}] = :ets.lookup(__MODULE__, session_id)
     pid
   end
 
-  def lookup(session_id \\ 12) do
+  def lookup(session_id) do
     case :ets.lookup(__MODULE__, session_id) do
       [{^session_id, pid}] ->
         {:ok, pid}
@@ -30,7 +30,7 @@ defmodule Democrify.SessionRegistry do
     end
   end
 
-  def delete(session_id \\ 12) do
+  def delete(session_id) do
     :ets.delete(__MODULE__, session_id)
   end
 
