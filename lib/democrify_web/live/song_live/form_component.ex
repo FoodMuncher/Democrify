@@ -7,14 +7,11 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
 
   @impl true
   def mount(socket) do
-    IO.inspect("mount socket: #{inspect(socket)}")
-    {:ok, socket}
+    {:ok, assign(socket, :suggested_songs, nil)}
   end
 
   @impl true
   def update(%{song: song} = assigns, socket) do
-    IO.inspect("assigns: #{inspect(assigns)}")
-    IO.inspect("socket: #{inspect(socket)}")
     changeset = Session.change_song(song)
 
     {:ok,
@@ -25,10 +22,26 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"song" => song_params}, socket) do
+    Logger.debug("Here Validate: #{inspect(song_params)}")
+
+    text = song_params["text"]
+
+    suggested_songs =
+      if text && text != "" do
+        ["song_1", "song_2"]
+      else
+        nil
+      end
+
     changeset =
       socket.assigns.song
       |> Session.change_song(song_params)
       |> Map.put(:action, :validate)
+
+    socket =
+      socket
+      |> assign(:changeset, changeset)
+      |> assign(:suggested_songs, suggested_songs)
 
     {:noreply, assign(socket, :changeset, changeset)}
   end

@@ -7,10 +7,10 @@ defmodule DemocrifyWeb.SongLive.Index do
   require Logger
 
   @impl true
-  def mount(_params, _session, socket) do
-    Logger.debug("Here!!!!!!!!!!!!!!!")
-
+  def mount(_params, session, socket) do
     if connected?(socket), do: Session.subscribe()
+
+    Logger.debug("Index Session: #{inspect(session)}")
 
     {:ok,
      socket

@@ -1,7 +1,11 @@
 defmodule DemocrifyWeb.SongLive.SongComponent do
   use DemocrifyWeb, :live_component
 
+  require Logger
+
   def render(assigns) do
+    Logger.debug("Route: #{Routes.song_index_path(assigns.socket, :edit, assigns.song.id)}")
+
     ~L"""
     <div id="song-<%= @song.id %>" class="song">
       <div class="row">

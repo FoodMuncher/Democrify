@@ -1,11 +1,13 @@
 defmodule DemocrifyWeb.PageController do
   use DemocrifyWeb, :controller
 
+  require Logger
+
   alias Democrify.Session
 
   @redirect_uri "http://localhost:4000/callback"
   @client_id "4ccc8676aaf54c94a6400ce027c1c93e"
-  # @client_secret "7a60fbf860574f59a73702e27e7265ff"
+  @client_secret "7a60fbf860574f59a73702e27e7265ff"
 
   # ===========================================================
   # Home Page Handlers
@@ -37,21 +39,23 @@ defmodule DemocrifyWeb.PageController do
     redirect(conn, external: url)
   end
 
-  def callback(conn, _params) do
-    # url = "https://accounts.spotify.com/api/token"
+  def callback(conn, params) do
+    url = "https://accounts.spotify.com/api/token"
 
-    # body =
-    #   {:form,
-    #    [
-    #      grant_type: "authorization_code",
-    #      code: params["code"],
-    #      redirect_uri: @redirect_uri,
-    #      client_id: @client_id,
-    #      client_secret: @client_secret
-    #    ]}
+    request_body =
+      {:form,
+       [
+         grant_type: "authorization_code",
+         code: params["code"],
+         redirect_uri: @redirect_uri,
+         client_id: @client_id,
+         client_secret: @client_secret
+       ]}
 
-    # response = HTTPoison.post!(url, body)
-    # body = JSON.decode!(response.body)
+    response = HTTPoison.post!(url, request_body)
+    response_body = JSON.decode!(response.body)
+
+    Logger.debug("Response Body: #{inspect(response_body)}")
 
     # response2 =
     #   HTTPoison.get!("https://api.spotify.com/v1/me",
@@ -60,6 +64,8 @@ defmodule DemocrifyWeb.PageController do
 
     Session.create_session()
 
-    redirect(conn, to: Routes.song_index_path(conn, :index))
+    conn
+    |> put_session("access_token", response_body["access_token"])
+    |> redirect(to: Routes.song_index_path(conn, :index))
   end
 end
