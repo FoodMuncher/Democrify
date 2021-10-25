@@ -1,0 +1,65 @@
+defmodule DemocrifyWeb.PageController do
+  use DemocrifyWeb, :controller
+
+  alias Democrify.Session
+
+  @redirect_uri "http://localhost:4000/callback"
+  @client_id "4ccc8676aaf54c94a6400ce027c1c93e"
+  # @client_secret "7a60fbf860574f59a73702e27e7265ff"
+
+  # ===========================================================
+  # Home Page Handlers
+  # ===========================================================
+
+  def index(conn, _params) do
+    render(conn, "index.html")
+  end
+
+  def join(conn, params) do
+    # TODO: Check session exists, if it doesn't send to home with a flash card
+    conn
+    |> put_session("session_id", params["session_id"])
+    |> redirect(to: Routes.song_index_path(conn, :index))
+  end
+
+  # ===========================================================
+  #  Spotify Login Handlers
+  # ===========================================================
+
+  def login(conn, _params) do
+    scope =
+      "user-read-private user-read-email user-read-playback-state user-modify-playback-state"
+
+    url =
+      "https://accounts.spotify.com/authorize/?response_type=code&client_id=" <>
+        @client_id <> "&scope=" <> scope <> "&redirect_uri=" <> @redirect_uri
+
+    redirect(conn, external: url)
+  end
+
+  def callback(conn, _params) do
+    # url = "https://accounts.spotify.com/api/token"
+
+    # body =
+    #   {:form,
+    #    [
+    #      grant_type: "authorization_code",
+    #      code: params["code"],
+    #      redirect_uri: @redirect_uri,
+    #      client_id: @client_id,
+    #      client_secret: @client_secret
+    #    ]}
+
+    # response = HTTPoison.post!(url, body)
+    # body = JSON.decode!(response.body)
+
+    # response2 =
+    #   HTTPoison.get!("https://api.spotify.com/v1/me",
+    #     Authorization: "Bearer #{body["access_token"]}"
+    #   )
+
+    Session.create_session()
+
+    redirect(conn, to: Routes.song_index_path(conn, :index))
+  end
+end

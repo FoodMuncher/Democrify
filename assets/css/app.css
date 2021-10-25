@@ -1,0 +1,201 @@
+/* This file is for your main application CSS */
+@import "./phoenix.css";
+
+* {
+  color: maroon !important;
+  text-decoration: none;
+  font-family: Courier New;
+  font-style: normal;
+  font-weight: normal;
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+}
+ 
+body {
+  width: 100%;
+  background-color: antiquewhite;
+  padding: 0;
+}
+
+h1 {
+  font-weight: 900;
+}
+
+img {
+  border-radius: 50%;
+  border: 3px solid maroon !important;
+}
+
+hr {
+  height: 1px;
+  background-color: maroon;
+  border: none;
+}
+
+button {
+  background: antiquewhite;
+  padding: 20px;
+  border: 2px solid maroon !important;
+  display: inline-block;
+  transition: all 0.4s ease 0s;
+  border-radius: 6px;
+}
+  
+button:hover {
+  color: antiquewhite !important;
+  background: maroon;
+  border-color: maroon !important;
+  transition: all 0.3s ease 0s;
+}
+
+.topBar img {
+  right: 20px;
+}
+
+.topBar h2 {
+  float: left;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.page {
+  margin-top: 10%
+}
+
+.submitButton {
+  background: antiquewhite;
+  padding: 10px;
+  border: 2px solid maroon !important;
+  display: inline-block;
+  transition: all 0.4s ease 0s;
+  border-radius: 6px;
+}
+
+.submitButton:hover {
+  color: antiquewhite !important;
+  background: maroon;
+  border-color: maroon !important;
+  transition: all 0.3s ease 0s;
+}
+
+.textInput {
+  background: #FCF5EB;
+  padding: 10px;
+  border: 2px solid maroon !important;
+  display: inline-block;
+  outline: none;
+  border-radius: 6px;
+}
+
+.textInput:focus {
+  background: #FEFDFB;
+}
+
+/* Alerts and form errors used by phx.new */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+.alert-warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+}
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+.alert p {
+  margin-bottom: 0;
+}
+.alert:empty {
+  display: none;
+}
+.invalid-feedback {
+  color: #a94442;
+  display: block;
+  margin: -1rem 0 2rem;
+}
+
+/* LiveView specific classes for your customization */
+.phx-no-feedback.invalid-feedback,
+.phx-no-feedback .invalid-feedback {
+  display: none;
+}
+
+.phx-click-loading {
+  opacity: 0.5;
+  transition: opacity 1s ease-out;
+}
+
+.phx-disconnected{
+  cursor: wait;
+}
+.phx-disconnected *{
+  pointer-events: none;
+}
+
+.phx-modal {
+  opacity: 1!important;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.phx-modal-content {
+  background-color: #fefefe;
+  margin: 15vh auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.phx-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.phx-modal-close:hover,
+.phx-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Fontawesome 5 config */
+
+.songs {
+  align-items: center;
+}
+
+.song {
+  margin: 10px 100px;
+  padding: 10px 20px;
+  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.1);
+}
+
+.song-button-column {
+  text-align: center;
+  margin: 15px 0px 0px 0px;
+}
+
+

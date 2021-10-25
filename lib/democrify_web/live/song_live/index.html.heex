@@ -1,0 +1,19 @@
+<h1>Session: 12</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal DemocrifyWeb.SongLive.FormComponent,
+    id: @song.id || :new,
+    title: @page_title,
+    action: @live_action,
+    song: @song,
+    return_to: Routes.song_index_path(@socket, :index) %>
+<% end %>
+
+
+<div id="song">
+  <%= for song <- @session do %>
+    <%= live_component @socket, DemocrifyWeb.SongLive.SongComponent, id: song.id, song: song %>
+  <% end %>
+</div>
+
+<span><%= live_patch "New Song", to: Routes.song_index_path(@socket, :new) %></span>
