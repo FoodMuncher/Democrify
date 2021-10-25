@@ -13,66 +13,74 @@ defmodule Democrify.Session do
   # ========================================
 
   def create_session do
-    # session_id = generate_id()
-    Registry.create()
-    # session_id
-
-    # Hard coded for now
-    12
+    session_id = generate_id()
+    Registry.create(session_id)
+    session_id
   end
 
-  def exists?() do
-    Registry.lookup() != {:error, :notfound}
+  def exists?(session_id) do
+    Registry.lookup(session_id) != {:error, :notfound}
   end
 
-  def list_session() do
+  def list_session(session_id) do
     # TODO: Use actual session ID
-    Registry.lookup!()
+    Registry.lookup!(session_id)
     |> Worker.fetch_all()
   end
 
-  def inc_votes(%Song{} = song) do
-    Registry.lookup!()
+  def inc_votes(%Song{} = song, session_id) do
+    Registry.lookup!(session_id)
     |> Worker.increment(song)
-    |> broadcast(:songs_changed)
+    |> broadcast(session_id, :songs_changed)
   end
 
-  def get_song!(song_id) do
-    Registry.lookup!()
+  def get_song!(song_id, session_id) do
+    Registry.lookup!(session_id)
     |> Worker.fetch(song_id)
   end
 
-  def create_song(attrs) do
-    Registry.lookup!()
+  def create_song(attrs, session_id) do
+    Registry.lookup!(session_id)
     |> Worker.add(%Song{song_name: attrs["song_name"]})
-    |> broadcast(:songs_changed)
+    |> broadcast(session_id, :songs_changed)
   end
 
-  def update_song(%Song{} = song, attrs) do
-    Registry.lookup!()
+  def update_song(%Song{} = song, session_id, attrs) do
+    Registry.lookup!(session_id)
     |> Worker.update(%{song | song_name: attrs["song_name"], votes: 0})
-    |> broadcast(:songs_changed)
+    |> broadcast(session_id, :songs_changed)
   end
 
-  def delete_song(%Song{} = song) do
-    Registry.lookup!()
+  def delete_song(%Song{} = song, session_id) do
+    Registry.lookup!(session_id)
     |> Worker.delete(song)
-    |> broadcast(:songs_changed)
+    |> broadcast(session_id, :songs_changed)
   end
 
   def change_song(%Song{} = song, attrs \\ %{}) do
     Song.changeset(song, attrs)
   end
 
-  def subscribe() do
-    Phoenix.PubSub.subscribe(Democrify.PubSub, "session")
+  def subscribe(session_id) do
+    Phoenix.PubSub.subscribe(Democrify.PubSub, "session:#{session_id}")
   end
 
   # Internal Functions
   # ========================================
 
-  defp broadcast(songs, event) do
-    Phoenix.PubSub.broadcast(Democrify.PubSub, "session", {event, songs})
+  defp broadcast(songs, session_id, event) do
+    Phoenix.PubSub.broadcast(Democrify.PubSub, "session:#{session_id}", {event, songs})
     songs
+  end
+
+  defp generate_id do
+    min = String.to_integer("100000", 36)
+    max = String.to_integer("ZZZZZZ", 36)
+
+    max
+    |> Kernel.-(min)
+    |> :rand.uniform()
+    |> Kernel.+(min)
+    |> Integer.to_string(36)
   end
 end

@@ -7,14 +7,20 @@ defmodule DemocrifyWeb.SongLive.Index do
   require Logger
 
   @impl true
-  def mount(_params, _session, socket) do
-    Logger.debug("Here!!!!!!!!!!!!!!!")
+  def mount(_params, session, socket) do
+    session_id = session["session_id"]
+    Logger.debug("Session ID: #{inspect(session_id)}")
 
-    if connected?(socket), do: Session.subscribe()
+    if session_id != nil do
+      if connected?(socket), do: Session.subscribe(session_id)
 
-    {:ok,
-     socket
-     |> assign(:session, Session.list_session())}
+      {:ok,
+       socket
+       |> assign(:session, Session.list_session(session_id))
+       |> assign(:session_id, session_id)}
+    else
+      {:ok, redirect(socket, to: Routes.page_path(socket, :index))}
+    end
   end
 
   @impl true
@@ -23,9 +29,11 @@ defmodule DemocrifyWeb.SongLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => song_id}) do
+    Logger.debug("EDIT session_id: #{inspect(socket.assigns["session_id"])}")
+
     socket
     |> assign(:page_title, "Edit Song")
-    |> assign(:song, Session.get_song!(song_id))
+    |> assign(:song, Session.get_song!(song_id, socket.assigns["session_id"]))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -44,10 +52,13 @@ defmodule DemocrifyWeb.SongLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
+    session_id = socket.assigns["session_id"]
+    Logger.debug("DELETE session_id: #{inspect(socket.assigns["session_id"])}")
+
     ## TODO: Potnetial improvement, delete handles ID and song, saves fetching and deleting...
     songs =
-      Session.get_song!(id)
-      |> Session.delete_song()
+      Session.get_song!(id, session_id)
+      |> Session.delete_song(session_id)
 
     {:noreply, assign(socket, :session, songs)}
   end

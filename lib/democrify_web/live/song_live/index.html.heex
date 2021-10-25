@@ -1,4 +1,4 @@
-<h1>Session: 12</h1>
+<h1>Session: <%= @session_id %></h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal DemocrifyWeb.SongLive.FormComponent,
@@ -16,4 +16,4 @@
   <% end %>
 </div>
 
-<span><%= live_patch "New Song", to: Routes.song_index_path(@socket, :new) %></span>
+<span><%= live_patch "New Song", to: Routes.song_index_path(@socket, :new, @session_id) %></span>
