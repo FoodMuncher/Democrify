@@ -40,7 +40,7 @@ defmodule DemocrifyWeb.SongLive.SongComponent do
   end
 
   def handle_event("vote", _, socket) do
-    Democrify.Session.inc_votes(socket.assigns.song)
+    Democrify.Session.inc_votes(socket.assigns.song, socket.assigns.session_id)
     {:noreply, socket}
   end
 end

@@ -62,9 +62,13 @@ defmodule DemocrifyWeb.PageController do
     #     Authorization: "Bearer #{body["access_token"]}"
     #   )
 
-    Session.create_session()
-
-    conn
+    session_id = get_session(conn, "session_id")
+    # TODO: kill existing session, or ask to resume
+    if session_id == nil || not Session.exists?(session_id) do
+      put_session(conn, "session_id", Session.create_session())
+    else
+      conn
+    end
     |> put_session("access_token", response_body["access_token"])
     |> redirect(to: Routes.song_index_path(conn, :index))
   end
