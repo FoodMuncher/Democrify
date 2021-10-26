@@ -2,14 +2,14 @@ defmodule Democrify.SessionWorkerTest do
   use ExUnit.Case
 
   alias Democrify.Session.Song
-  alias Democrify.SessionWorker, as: Worker
+  alias Democrify.Session.Worker, as: Worker
 
   setup do
     session_id = 12
 
-    Democrify.SessionRegistry.delete(session_id)
+    Democrify.Session.Registry.delete(session_id)
 
-    worker_pid = Democrify.SessionRegistry.create(session_id)
+    worker_pid = Democrify.Session.Registry.create(session_id)
 
     %{session_id: session_id, worker_pid: worker_pid}
   end

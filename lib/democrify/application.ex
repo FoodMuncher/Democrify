@@ -17,8 +17,8 @@ defmodule Democrify.Application do
       # Start a worker by calling: Democrify.Worker.start_link(arg)
       # {Democrify.Worker, arg}
 
-      {DynamicSupervisor, name: Democrify.SessionWorkerSupervisor, strategy: :one_for_one},
-      Democrify.SessionRegistry
+      {DynamicSupervisor, name: Democrify.Session.WorkerSupervisor, strategy: :one_for_one},
+      Democrify.Session.Registry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

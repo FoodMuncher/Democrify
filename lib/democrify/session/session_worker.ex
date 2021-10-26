@@ -1,4 +1,4 @@
-defmodule Democrify.SessionWorker do
+defmodule Democrify.Session.Worker do
   use GenServer, restart: :temporary
 
   require Logger

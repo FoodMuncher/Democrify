@@ -1,4 +1,4 @@
-defmodule Democrify.SessionRegistry do
+defmodule Democrify.Session.Registry do
   use GenServer
 
   # ===========================================================
@@ -52,8 +52,8 @@ defmodule Democrify.SessionRegistry do
         [] ->
           {:ok, pid} =
             DynamicSupervisor.start_child(
-              Democrify.SessionWorkerSupervisor,
-              Democrify.SessionWorker
+              Democrify.Session.WorkerSupervisor,
+              Democrify.Session.Worker
             )
 
           :ets.insert_new(__MODULE__, {session_id, pid})

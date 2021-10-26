@@ -3,9 +3,7 @@ defmodule Democrify.Session do
   The Session context.
   """
 
-  alias Democrify.Session.Song
-  alias Democrify.SessionRegistry, as: Registry
-  alias Democrify.SessionWorker, as: Worker
+  alias Democrify.Session.{Song, Registry, Worker}
 
   # External Functions
   # ========================================
