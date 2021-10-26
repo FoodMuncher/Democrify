@@ -1,12 +1,11 @@
 defmodule DemocrifyWeb.PageController do
   use DemocrifyWeb, :controller
 
+  alias Democrify.Spotify
   alias Democrify.Session
   alias Democrify.Session.Data, as: SessionData
 
-  @redirect_uri "http://localhost:4000/callback"
-  @client_id "4ccc8676aaf54c94a6400ce027c1c93e"
-  @client_secret "7a60fbf860574f59a73702e27e7265ff"
+  require Logger
 
   # ===========================================================
   # Home Page Handlers
@@ -34,31 +33,11 @@ defmodule DemocrifyWeb.PageController do
   # ===========================================================
 
   def login(conn, _params) do
-    scope =
-      "user-read-private user-read-email user-read-playback-state user-modify-playback-state"
-
-    url =
-      "https://accounts.spotify.com/authorize/?response_type=code&client_id=" <>
-        @client_id <> "&scope=" <> scope <> "&redirect_uri=" <> @redirect_uri
-
-    redirect(conn, external: url)
+    redirect(conn, external: Spotify.authorize_url())
   end
 
   def callback(conn, params) do
-    url = "https://accounts.spotify.com/api/token"
-
-    request_body =
-      {:form,
-       [
-         grant_type: "authorization_code",
-         code: params["code"],
-         redirect_uri: @redirect_uri,
-         client_id: @client_id,
-         client_secret: @client_secret
-       ]}
-
-    response = HTTPoison.post!(url, request_body)
-    response_body = JSON.decode!(response.body)
+    authorisation_tokens = Spotify.get_authorisation_tokens(params["code"])
 
     session_id = get_session(conn, "session_id")
     # TODO: kill existing session, or ask to resume
@@ -69,7 +48,7 @@ defmodule DemocrifyWeb.PageController do
         session_id
       end
 
-    access_token = response_body["access_token"]
+    access_token = authorisation_tokens.access_token
 
     SessionData.add(session_id, access_token)
 

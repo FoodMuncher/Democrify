@@ -48,7 +48,8 @@ defmodule Democrify.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 1.8"},
-      {:json, "~> 1.4"}
+      {:json, "~> 1.4"},
+      {:poison, "~> 5.0"}
     ]
   end
 
