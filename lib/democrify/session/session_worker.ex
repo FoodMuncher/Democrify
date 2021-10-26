@@ -1,9 +1,11 @@
-defmodule Democrify.SessionWorker do
+defmodule Democrify.Session.Worker do
   use GenServer, restart: :temporary
 
   require Logger
 
   alias Democrify.Session.Song
+
+  # TODO: Have cleanup message or time out, which cleans up this is session if it's inactive for x amount of time...
 
   # =================================
   # API Functions

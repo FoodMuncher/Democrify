@@ -4,6 +4,7 @@
   <%= live_modal DemocrifyWeb.SongLive.FormComponent,
     id: @song.id || :new,
     session_id: @session_id,
+    access_token: @access_token,
     title: @page_title,
     action: @live_action,
     song: @song,

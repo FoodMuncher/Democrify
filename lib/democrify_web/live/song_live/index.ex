@@ -4,8 +4,6 @@ defmodule DemocrifyWeb.SongLive.Index do
   alias Democrify.Session
   alias Democrify.Session.Song
 
-  require Logger
-
   @impl true
   def mount(_params, session, socket) do
     session_id = session["session_id"]
@@ -16,7 +14,8 @@ defmodule DemocrifyWeb.SongLive.Index do
       {:ok,
        socket
        |> assign(:session, Session.list_session(session_id))
-       |> assign(:session_id, session_id)}
+       |> assign(:session_id, session_id)
+       |> assign(:access_token, session["access_token"])}
     else
       {:ok, redirect(socket, to: Routes.page_path(socket, :index))}
     end

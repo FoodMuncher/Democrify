@@ -3,11 +3,7 @@ defmodule Democrify.Session do
   The Session context.
   """
 
-  require Logger
-
-  alias Democrify.Session.Song
-  alias Democrify.SessionRegistry, as: Registry
-  alias Democrify.SessionWorker, as: Worker
+  alias Democrify.Session.{Song, Registry, Worker}
 
   # External Functions
   # ========================================
@@ -39,15 +35,17 @@ defmodule Democrify.Session do
     |> Worker.fetch(song_id)
   end
 
-  def create_song(attrs, session_id) do
+  def create_song(track_id, session_id, access_token) do
     Registry.lookup!(session_id)
-    |> Worker.add(%Song{song_name: attrs["song_name"]})
+    |> Worker.add(fetch_song(track_id, access_token))
     |> broadcast(session_id, :songs_changed)
   end
 
-  def update_song(%Song{} = song, session_id, attrs) do
+  def update_song(track_id, session_id, access_token, %Song{} = song) do
+    song = fetch_song(track_id, access_token, song)
+
     Registry.lookup!(session_id)
-    |> Worker.update(%{song | song_name: attrs["song_name"], votes: 0})
+    |> Worker.update(%Song{song | votes: 0})
     |> broadcast(session_id, :songs_changed)
   end
 
@@ -82,5 +80,25 @@ defmodule Democrify.Session do
     |> :rand.uniform()
     |> Kernel.+(min)
     |> Integer.to_string(36)
+  end
+
+  defp fetch_song(track_id, access_token) do
+    fetch_song(track_id, access_token, %Song{})
+  end
+
+  defp fetch_song(track_id, access_token, song) do
+    response =
+      HTTPoison.get!("https://api.spotify.com/v1/tracks/#{track_id}",
+        Authorization: "Bearer #{access_token}"
+      )
+
+    response_body = JSON.decode!(response.body)
+
+    %Song{
+      song
+      | name: response_body["name"],
+        artists: Song.artists(response_body["artists"]),
+        image_url: hd(response_body["album"]["images"])["url"]
+    }
   end
 end
