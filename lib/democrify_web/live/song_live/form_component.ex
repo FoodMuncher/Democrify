@@ -1,8 +1,10 @@
 defmodule DemocrifyWeb.SongLive.FormComponent do
   use DemocrifyWeb, :live_component
 
-  alias Democrify.Session
+  alias Democrify.{Session, Spotify}
   alias Democrify.Session.Song
+
+  require Logger
 
   @impl true
   def mount(socket) do
@@ -21,24 +23,17 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"song" => song_params}, socket) do
-    text = song_params["text"]
+    query = song_params["query"]
 
     suggested_songs =
-      if text && text != "" do
-        response =
-          HTTPoison.get!(
-            URI.encode("https://api.spotify.com/v1/search?q=#{text}&type=track&limit=10"),
-            Authorization: "Bearer #{socket.assigns.access_token}"
-          )
+      if query && query != "" do
+        search = Spotify.search_tracks(query, socket.assigns.access_token)
+        tracks = search.tracks.items
 
-        response_body = JSON.decode!(response.body)
-
-        case convert_body_to_list(response_body["tracks"]["items"]) do
-          [] ->
-            nil
-
-          songs ->
-            songs
+        if tracks != [] do
+          convert_tracks(tracks)
+        else
+          nil
         end
       else
         nil
@@ -88,14 +83,11 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
      |> push_redirect(to: socket.assigns.return_to)}
   end
 
-  defp convert_body_to_list([]) do
+  defp convert_tracks([]) do
     []
   end
 
-  defp convert_body_to_list([track | tracks]) do
-    [
-      {"#{track["name"]} - #{Song.artists(track["artists"])}", track["id"]}
-      | convert_body_to_list(tracks)
-    ]
+  defp convert_tracks([track | tracks]) do
+    [{"#{track.name} - #{Song.artists(track.artists)}", track.id} | convert_tracks(tracks)]
   end
 end

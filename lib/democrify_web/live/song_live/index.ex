@@ -8,7 +8,7 @@ defmodule DemocrifyWeb.SongLive.Index do
   def mount(_params, session, socket) do
     session_id = session["session_id"]
 
-    if session_id != nil do
+    if session_id != nil && Session.exists?(session_id) do
       if connected?(socket), do: Session.subscribe(session_id)
 
       {:ok,

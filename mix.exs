@@ -4,7 +4,7 @@ defmodule Democrify.MixProject do
   def project do
     [
       app: :democrify,
-      version: "0.3.0",
+      version: "0.3.1",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:gettext] ++ Mix.compilers(),
@@ -48,7 +48,8 @@ defmodule Democrify.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 1.8"},
-      {:json, "~> 1.4"}
+      {:json, "~> 1.4"},
+      {:poison, "~> 5.0"}
     ]
   end
 

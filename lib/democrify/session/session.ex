@@ -4,6 +4,9 @@ defmodule Democrify.Session do
   """
 
   alias Democrify.Session.{Song, Registry, Worker}
+  alias Democrify.Spotify
+
+  require Logger
 
   # External Functions
   # ========================================
@@ -87,18 +90,16 @@ defmodule Democrify.Session do
   end
 
   defp fetch_song(track_id, access_token, song) do
-    response =
-      HTTPoison.get!("https://api.spotify.com/v1/tracks/#{track_id}",
-        Authorization: "Bearer #{access_token}"
-      )
+    track = Spotify.get_track(track_id, access_token)
 
-    response_body = JSON.decode!(response.body)
+    Logger.debug("Track: #{inspect(track)}")
 
     %Song{
       song
-      | name: response_body["name"],
-        artists: Song.artists(response_body["artists"]),
-        image_url: hd(response_body["album"]["images"])["url"]
+      | name: track.name,
+        artists: Song.artists(track.artists),
+        image_url: hd(track.album.images).url,
+        track_id: track_id
     }
   end
 end
