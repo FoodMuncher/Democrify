@@ -1,22 +1,16 @@
-defmodule Democrify.Spotify.Tokens do
+defmodule Democrify.Spotify.Search do
+  alias Democrify.Spotify.Tracks
+
   # ===========================================================
   #  Struct
   # ===========================================================
 
   @type t :: %__MODULE__{
-          access_token: String.t(),
-          token_type: String.t(),
-          scope: String.t(),
-          expires_in: Integer.t(),
-          refresh_token: String.t()
+          tracks: Tracks.t()
         }
 
   defstruct [
-    :access_token,
-    :token_type,
-    :scope,
-    :expires_in,
-    :refresh_token
+    :tracks
   ]
 
   # ===========================================================
@@ -24,6 +18,10 @@ defmodule Democrify.Spotify.Tokens do
   # ===========================================================
 
   def constructor(response) do
-    Poison.decode!(response.body, %{as: %Democrify.Spotify.Tokens{}})
+    Poison.decode!(response.body, %{
+      as: %__MODULE__{
+        :tracks => Tracks.structure()
+      }
+    })
   end
 end

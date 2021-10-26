@@ -23,10 +23,10 @@ defmodule Democrify.Session.Song do
   end
 
   def artists([artist]) do
-    "#{artist["name"]}"
+    "#{artist.name}"
   end
 
   def artists([artist | artists]) do
-    "#{artist["name"]}, #{artists(artists)}"
+    "#{artist.name}, #{artists(artists)}"
   end
 end

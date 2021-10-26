@@ -3,7 +3,9 @@ defmodule Democrify.Spotify do
   Module for handling any Spotify API interactions
   """
 
-  alias Democrify.Spotify.Tokens
+  alias Democrify.Spotify.{Tokens, Track, Search}
+
+  require Logger
 
   @redirect_uri "http://localhost:4000/callback"
   @scope "user-read-private user-read-email user-read-playback-state user-modify-playback-state"
@@ -33,5 +35,24 @@ defmodule Democrify.Spotify do
 
     response = HTTPoison.post!(url, request_body)
     Tokens.constructor(response)
+  end
+
+  def get_track(track_id, access_token) do
+    response =
+      HTTPoison.get!("https://api.spotify.com/v1/tracks/#{track_id}",
+        Authorization: "Bearer #{access_token}"
+      )
+
+    Track.constructor(response)
+  end
+
+  def search_tracks(query, access_token) do
+    response =
+      HTTPoison.get!(
+        URI.encode("https://api.spotify.com/v1/search?q=#{query}&type=track&limit=10"),
+        Authorization: "Bearer #{access_token}"
+      )
+
+    Search.constructor(response)
   end
 end

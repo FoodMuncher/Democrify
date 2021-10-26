@@ -10,7 +10,7 @@
     phx-submit="save">
   
     <%= label f, :song_name %>
-    <%= text_input f, :text, autocomplete: "off" %>
+    <%= text_input f, :query, autocomplete: "off" %>
     <%= if @suggested_songs do %>
       <%= select f, :track_id, @suggested_songs %>
     <% end %>
