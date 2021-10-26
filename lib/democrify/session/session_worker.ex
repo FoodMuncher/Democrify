@@ -5,6 +5,8 @@ defmodule Democrify.Session.Worker do
 
   alias Democrify.Session.Song
 
+  # TODO: Have cleanup message or time out, which cleans up this is session if it's inactive for x amount of time...
+
   # =================================
   # API Functions
   # =================================

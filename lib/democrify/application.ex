@@ -7,6 +7,8 @@ defmodule Democrify.Application do
 
   @impl true
   def start(_type, _args) do
+    Democrify.Session.Data.start()
+
     children = [
       # Start the Telemetry supervisor
       DemocrifyWeb.Telemetry,

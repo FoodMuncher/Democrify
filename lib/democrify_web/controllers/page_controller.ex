@@ -2,6 +2,7 @@ defmodule DemocrifyWeb.PageController do
   use DemocrifyWeb, :controller
 
   alias Democrify.Session
+  alias Democrify.Session.Data, as: SessionData
 
   @redirect_uri "http://localhost:4000/callback"
   @client_id "4ccc8676aaf54c94a6400ce027c1c93e"
@@ -17,8 +18,14 @@ defmodule DemocrifyWeb.PageController do
 
   def join(conn, params) do
     # TODO: Check session exists, if it doesn't send to home with a flash card
+
+    session_id = params["session_id"]
+
+    access_token = SessionData.fetch!(session_id)
+
     conn
-    |> put_session("session_id", params["session_id"])
+    |> put_session(:session_id, session_id)
+    |> put_session(:access_token, access_token)
     |> redirect(to: Routes.song_index_path(conn, :index))
   end
 
@@ -53,19 +60,22 @@ defmodule DemocrifyWeb.PageController do
     response = HTTPoison.post!(url, request_body)
     response_body = JSON.decode!(response.body)
 
-    # response2 =
-    #   HTTPoison.get!("https://api.spotify.com/v1/me",
-    #     Authorization: "Bearer #{body.access_token}"
-    #   )
-
     session_id = get_session(conn, "session_id")
     # TODO: kill existing session, or ask to resume
-    if session_id == nil || not Session.exists?(session_id) do
-      put_session(conn, :session_id, Session.create_session())
-    else
-      conn
-    end
-    |> put_session("access_token", response_body["access_token"])
+    session_id =
+      if session_id == nil || not Session.exists?(session_id) do
+        Session.create_session()
+      else
+        session_id
+      end
+
+    access_token = response_body["access_token"]
+
+    SessionData.add(session_id, access_token)
+
+    conn
+    |> put_session(:session_id, session_id)
+    |> put_session(:access_token, access_token)
     |> redirect(to: Routes.song_index_path(conn, :index))
   end
 end
