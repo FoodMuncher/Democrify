@@ -64,4 +64,14 @@ defmodule Democrify.Spotify do
 
     Status.constructor(response)
   end
+
+  def add_song_to_queue(track_uri, access_token) do
+    Logger.debug("Added Track: #{track_uri} to the Queue")
+
+    HTTPoison.post!(
+      URI.encode("https://api.spotify.com/v1/me/player/queue?uri=#{track_uri}"),
+      "",
+      Authorization: "Bearer #{access_token}"
+    )
+  end
 end

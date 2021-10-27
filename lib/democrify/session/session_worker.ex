@@ -19,6 +19,10 @@ defmodule Democrify.Session.Worker do
     GenServer.call(worker_pid, :fetch_all)
   end
 
+  def fetch_top_track(worker_pid) do
+    GenServer.call(worker_pid, :fetch_top_song)
+  end
+
   def fetch(worker_pid, id) when is_binary(id) do
     fetch(worker_pid, String.to_integer(id))
   end
@@ -50,12 +54,31 @@ defmodule Democrify.Session.Worker do
   @impl true
   def init(%{session_id: session_id}) do
     send(self(), :start_player)
-    {:ok, %{session: [], id: 1, player_pid: nil, session_id: session_id}}
+
+    {:ok,
+     %{
+       session: [],
+       id: 1,
+       player_pid: nil,
+       session_id: session_id
+     }}
   end
 
   @impl true
   def handle_call(:fetch_all, _from, state) do
     {:reply, strip_ids(state.session), state}
+  end
+
+  def handle_call(:fetch_top_song, _from, state) do
+    return =
+      if state.session != [] do
+        {_id, song} = hd(state.session)
+        song
+      else
+        nil
+      end
+
+    {:reply, return, state}
   end
 
   def handle_call({:fetch, id}, _from, state) do
@@ -95,17 +118,13 @@ defmodule Democrify.Session.Worker do
 
   @impl true
   def handle_info(:start_player, state) do
-    Logger.debug("Starting Player....")
     Process.flag(:trap_exit, true)
     {:ok, player_pid} = Democrify.Spotify.Player.start_link(state.session_id)
-
-    Logger.debug("Worker: #{inspect(self())} Player: #{inspect(player_pid)}")
-
     {:noreply, %{state | player_pid: player_pid}}
   end
 
   def handle_info({:EXIT, _pid, reason}, state) do
-    Logger.error("Player Crashed, Rason: #{inspect(reason)}")
+    Logger.error("Player Crashed, Reason: #{inspect(reason)}")
     {:ok, player_pid} = Democrify.Spotify.Player.start_link(state.session_id)
     {:noreply, %{state | player_pid: player_pid}}
   end

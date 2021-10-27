@@ -11,6 +11,7 @@ defmodule Democrify.Session.Song do
     field(:track_id, :string)
     field(:artists, :string)
     field(:image_url, :string, default: @spotify_image_url)
+    field(:track_uri, :string)
 
     timestamps()
   end

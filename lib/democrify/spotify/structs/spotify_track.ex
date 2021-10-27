@@ -18,7 +18,8 @@ defmodule Democrify.Spotify.Track do
     :artists,
     :name,
     :id,
-    :duration_ms
+    :duration_ms,
+    :uri
   ]
 
   # ===========================================================
