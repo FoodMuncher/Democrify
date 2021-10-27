@@ -11,8 +11,8 @@ defmodule Democrify.Session.Worker do
   # API Functions
   # =================================
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts)
+  def start_link(init_args) do
+    GenServer.start_link(__MODULE__, init_args)
   end
 
   def fetch_all(worker_pid) do
@@ -48,8 +48,9 @@ defmodule Democrify.Session.Worker do
   # =================================
 
   @impl true
-  def init(_init_arg) do
-    {:ok, %{session: [], id: 1}}
+  def init(%{session_id: session_id}) do
+    send(self(), :start_player)
+    {:ok, %{session: [], id: 1, player_pid: nil, session_id: session_id}}
   end
 
   @impl true
@@ -90,6 +91,23 @@ defmodule Democrify.Session.Worker do
   def handle_call({:delete, id}, _from, state) do
     session = List.keydelete(state.session, id, 0)
     {:reply, strip_ids(session), %{state | session: session}}
+  end
+
+  @impl true
+  def handle_info(:start_player, state) do
+    Logger.debug("Starting Player....")
+    Process.flag(:trap_exit, true)
+    {:ok, player_pid} = Democrify.Spotify.Player.start_link(state.session_id)
+
+    Logger.debug("Worker: #{inspect(self())} Player: #{inspect(player_pid)}")
+
+    {:noreply, %{state | player_pid: player_pid}}
+  end
+
+  def handle_info({:EXIT, _pid, reason}, state) do
+    Logger.error("Player Crashed, Rason: #{inspect(reason)}")
+    {:ok, player_pid} = Democrify.Spotify.Player.start_link(state.session_id)
+    {:noreply, %{state | player_pid: player_pid}}
   end
 
   # =================================

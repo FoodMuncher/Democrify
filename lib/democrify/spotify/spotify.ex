@@ -3,7 +3,7 @@ defmodule Democrify.Spotify do
   Module for handling any Spotify API interactions
   """
 
-  alias Democrify.Spotify.{Tokens, Track, Search}
+  alias Democrify.Spotify.{Tokens, Track, Search, Status}
 
   require Logger
 
@@ -54,5 +54,14 @@ defmodule Democrify.Spotify do
       )
 
     Search.constructor(response)
+  end
+
+  def get_player_status(access_token) do
+    response =
+      HTTPoison.get!("https://api.spotify.com/v1/me/player",
+        Authorization: "Bearer #{access_token}"
+      )
+
+    Status.constructor(response)
   end
 end

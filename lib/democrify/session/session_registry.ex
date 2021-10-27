@@ -50,12 +50,7 @@ defmodule Democrify.Session.Registry do
           pid
 
         [] ->
-          {:ok, pid} =
-            DynamicSupervisor.start_child(
-              Democrify.Session.WorkerSupervisor,
-              Democrify.Session.Worker
-            )
-
+          {:ok, pid} = Democrify.Session.Supervisor.start_worker(session_id)
           :ets.insert_new(__MODULE__, {session_id, pid})
           pid
       end
