@@ -5,8 +5,6 @@ defmodule DemocrifyWeb.PageController do
   alias Democrify.Session
   alias Democrify.Session.Data, as: SessionData
 
-  require Logger
-
   # ===========================================================
   # Home Page Handlers
   # ===========================================================

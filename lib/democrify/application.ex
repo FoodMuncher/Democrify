@@ -16,10 +16,7 @@ defmodule Democrify.Application do
       {Phoenix.PubSub, name: Democrify.PubSub},
       # Start the Endpoint (http/https)
       DemocrifyWeb.Endpoint,
-      # Start a worker by calling: Democrify.Worker.start_link(arg)
-      # {Democrify.Worker, arg}
-
-      {DynamicSupervisor, name: Democrify.Session.WorkerSupervisor, strategy: :one_for_one},
+      Democrify.Session.Supervisor,
       Democrify.Session.Registry
     ]
 

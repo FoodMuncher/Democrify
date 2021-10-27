@@ -9,14 +9,17 @@ defmodule Democrify.Spotify.Track do
           album: Album.t(),
           artists: [%Artist{}],
           name: String.t(),
-          id: String.t()
+          id: String.t(),
+          duration_ms: Integer.t()
         }
 
   defstruct [
     :album,
     :artists,
     :name,
-    :id
+    :id,
+    :duration_ms,
+    :uri
   ]
 
   # ===========================================================

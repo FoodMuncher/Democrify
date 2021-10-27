@@ -4,8 +4,6 @@ defmodule DemocrifyWeb.SongLive.FormComponent do
   alias Democrify.{Session, Spotify}
   alias Democrify.Session.Song
 
-  require Logger
-
   @impl true
   def mount(socket) do
     {:ok, assign(socket, :suggested_songs, nil)}
