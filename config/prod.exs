@@ -10,8 +10,12 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :democrify, DemocrifyWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "democrify.fly.dev", port: 8080],
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  server: true
+
+config :democrify, Democrify.Spotify,
+  redirect_base_url: "democrify.fly.dev"
 
 # Do not print debug messages in production
 config :logger, level: :info

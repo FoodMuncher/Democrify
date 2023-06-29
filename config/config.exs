@@ -14,6 +14,9 @@ config :democrify, DemocrifyWeb.Endpoint,
   pubsub_server: Democrify.PubSub,
   live_view: [signing_salt: "mGD5Kv/E"]
 
+config :democrify, Democrify.Spotify,
+  redirect_base_url: "localhost:4000"
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

@@ -7,7 +7,9 @@ defmodule Democrify.Spotify do
 
   require Logger
 
-  @redirect_uri "http://localhost:4000/callback"
+  @redirect_base_url Application.compile_env!(:democrify, [__MODULE__, :redirect_base_url])
+
+  @redirect_uri "http://#{@redirect_base_url}/callback"
   @scope "user-read-private user-read-email user-read-playback-state user-modify-playback-state"
   @client_id "4ccc8676aaf54c94a6400ce027c1c93e"
   @client_secret "7a60fbf860574f59a73702e27e7265ff"
