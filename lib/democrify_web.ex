@@ -17,6 +17,8 @@ defmodule DemocrifyWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: DemocrifyWeb
@@ -24,6 +26,8 @@ defmodule DemocrifyWeb do
       import Plug.Conn
       import DemocrifyWeb.Gettext
       alias DemocrifyWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -91,6 +95,17 @@ defmodule DemocrifyWeb do
       import DemocrifyWeb.ErrorHelpers
       import DemocrifyWeb.Gettext
       alias DemocrifyWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: DemocrifyWeb.Endpoint,
+        router: DemocrifyWeb.Router,
+        statics: DemocrifyWeb.static_paths()
     end
   end
 
