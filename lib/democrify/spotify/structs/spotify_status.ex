@@ -18,7 +18,7 @@ defmodule Democrify.Spotify.Status do
 
   def structure do
     %__MODULE__{
-      :item => Track.structure()
+      item: Track.structure()
     }
   end
 end

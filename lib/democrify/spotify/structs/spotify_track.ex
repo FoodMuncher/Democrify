@@ -38,8 +38,8 @@ defmodule Democrify.Spotify.Track do
 
   def structure do
     %__MODULE__{
-      :artists => [%Artist{}],
-      :album => Album.structure()
+      artists: [%Artist{}],
+      album: Album.structure()
     }
   end
 end
