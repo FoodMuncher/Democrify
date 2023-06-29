@@ -49,7 +49,7 @@ defmodule DemocrifyWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {DemocrifyWeb.LayoutView, "live.html"}
+        layout: {DemocrifyWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
